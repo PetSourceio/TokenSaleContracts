@@ -18,6 +18,6 @@
     "chai-bignumber": "^2.0.2"
   },
   "dependencies": {
-    "zeppelin-solidity": "1.7.0"
+    "zeppelin-solidity": "1.8.0"
   }
 }

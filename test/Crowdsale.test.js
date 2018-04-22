@@ -5,19 +5,19 @@ const should = require('chai')
   .use(require('chai-bignumber')(BigNumber))
   .should();
 
-const HardcapToken = artifacts.require("./HardcapToken")
-const HardcapCrowdsale = artifacts.require("./HardcapCrowdsaleMock");
+const Token = artifacts.require("./Token")
+const Crowdsale = artifacts.require("./CrowdsaleMock");
 const TeamTokenHolder = artifacts.require("./TeamTokenHolder");
 
-contract('HardcapCrowdsaleTest', function (accounts) {
+contract('CrowdsaleTest', function (accounts) {
   let investor = accounts[0];
   let wallet = accounts[1];
   let purchaser = accounts[2];
   let platform = accounts[3];
 
   beforeEach(async function () {
-    this.token = await HardcapToken.new();
-    this.crowdsale = await HardcapCrowdsale.new(wallet, platform, this.token.address);
+    this.token = await Token.new();
+    this.crowdsale = await rowdsale.new(wallet, platform, this.token.address);
     this.teamTokenHolder = await TeamTokenHolder.new(wallet, this.crowdsale.address, this.token.address);
     await this.token.transferOwnership(this.crowdsale.address);
   });
@@ -241,106 +241,6 @@ contract('HardcapCrowdsaleTest', function (accounts) {
     });
   });
 
-  describe('assigning tokens', function () {
-    it('should reveive correct amount (1340) of tokens when assigning 1 ether for the 1\'st phase', async function () {
-      await this.crowdsale.setCurrentTime(Math.round(new Date('2018-03-28').getTime() / 1000));
-      await this.crowdsale.assignTokens(investor, ether(1));
-      const balance = await this.token.balanceOf(investor);
-      balance.should.be.bignumber.equal(1340e18);
-      const phase = await this.crowdsale.phase();
-      phase.should.be.bignumber.equal(1);
-    });
-    it('should reveive correct amount (1290) of tokens when assigning 1 ether for the 2\'nd phase', async function () {
-      await this.crowdsale.setCurrentTime(Math.round(new Date('2018-03-28').getTime() / 1000));
-      await this.crowdsale.buyTokens(wallet, { value: ether(10000) });
-      await this.crowdsale.assignTokens(investor, ether(1));
-      const balance = await this.token.balanceOf(investor);
-      balance.should.be.bignumber.equal(1290e18);
-      const phase = await this.crowdsale.phase();
-      phase.should.be.bignumber.equal(2);
-    });
-    it('should reveive correct amount (1240) of tokens when assigning 1 ether for the 3\'rd phase', async function () {
-      await this.crowdsale.setCurrentTime(Math.round(new Date('2018-03-28').getTime() / 1000));
-      await this.crowdsale.buyTokens(wallet, { value: ether(15000) });
-      await this.crowdsale.assignTokens(investor, ether(1));
-      const balance = await this.token.balanceOf(investor);
-      balance.should.be.bignumber.equal(1240e18);
-      const phase = await this.crowdsale.phase();
-      phase.should.be.bignumber.equal(3);
-    });
-    it('should reveive correct amount (1190) of tokens when assigning 1 ether for the 4\'th phase', async function () {
-      await this.crowdsale.setCurrentTime(Math.round(new Date('2018-03-28').getTime() / 1000));
-      await this.crowdsale.buyTokens(wallet, { value: ether(21000) });
-      await this.crowdsale.assignTokens(investor, ether(1));
-      const balance = await this.token.balanceOf(investor);
-      balance.should.be.bignumber.equal(1190e18);
-      const phase = await this.crowdsale.phase();
-      phase.should.be.bignumber.equal(4);
-    });
-    it('should reveive correct amount (1140) of tokens when assigning 1 ether for the 5\'th phase', async function () {
-      await this.crowdsale.setCurrentTime(Math.round(new Date('2018-03-28').getTime() / 1000));
-      await this.crowdsale.buyTokens(wallet, { value: ether(26000) });
-      await this.crowdsale.assignTokens(investor, ether(1));
-      const balance = await this.token.balanceOf(investor);
-      balance.should.be.bignumber.equal(1140e18);
-      const phase = await this.crowdsale.phase();
-      phase.should.be.bignumber.equal(5);
-    });
-    it('should reveive correct amount (1090) of tokens when assigning 1 ether for the 6\'th phase', async function () {
-      await this.crowdsale.setCurrentTime(Math.round(new Date('2018-03-28').getTime() / 1000));
-      await this.crowdsale.buyTokens(wallet, { value: ether(31000) });
-      await this.crowdsale.assignTokens(investor, ether(1));
-      const balance = await this.token.balanceOf(investor);
-      balance.should.be.bignumber.equal(1090e18);
-      const phase = await this.crowdsale.phase();
-      phase.should.be.bignumber.equal(6);
-    });
-    it('should reveive correct amount (1050) of tokens when assigning 1 ether for the 7\'th phase', async function () {
-      await this.crowdsale.setCurrentTime(Math.round(new Date('2018-03-28').getTime() / 1000));
-      await this.crowdsale.buyTokens(wallet, { value: ether(40000) });
-      await this.crowdsale.assignTokens(investor, ether(1));
-      const balance = await this.token.balanceOf(investor);
-      balance.should.be.bignumber.equal(1050e18);
-      const phase = await this.crowdsale.phase();
-      phase.should.be.bignumber.equal(7);
-    });
-    it('should reveive correct amount (1000) of tokens when assigning 1 ether for the 8\'th phase', async function () {
-      await this.crowdsale.setCurrentTime(Math.round(new Date('2018-03-28').getTime() / 1000));
-      await this.crowdsale.buyTokens(wallet, { value: ether(50000) });
-      await this.crowdsale.assignTokens(investor, ether(1));
-      const balance = await this.token.balanceOf(investor);
-      balance.should.be.bignumber.equal(1000e18);
-      const phase = await this.crowdsale.phase();
-      phase.should.be.bignumber.equal(8);
-    });
-    it('should reject assigning when phase 8 exceeded tokens', async function () {
-      await this.crowdsale.setCurrentTime(Math.round(new Date('2018-03-28').getTime() / 1000));
-      await this.crowdsale.buyTokens(wallet, { value: ether(60000) });
-      try {
-          await this.crowdsale.assignTokens(investor, ether(1));
-          assert.fail('Expected reject not received');
-      } catch (error) {
-        assert(error.message.search('revert') > 0, 'Wrong error message received: ' + error.message);
-      }
-    });
-    it('should forward the colsing time by 10 days', async function () {
-      await this.crowdsale.setCurrentTime(Math.round(new Date('2018-03-28').getTime() / 1000));
-      await this.crowdsale.assignTokens(investor, ether(10000));
-      const phase = await this.crowdsale.phase();
-      phase.should.be.bignumber.equal(2);
-      const closingTime = await this.crowdsale.closingTime();
-      closingTime.should.be.bignumber.equal(Math.round(new Date('2018-04-07').getTime() / 1000));
-    });
-    it('should set colsing time to the end of crowdsale', async function () {
-      await this.crowdsale.setCurrentTime(Math.round(new Date('2018-06-10').getTime() / 1000));
-      await this.crowdsale.assignTokens(investor, ether(10000));
-      const phase = await this.crowdsale.phase();
-      phase.should.be.bignumber.equal(8);
-      const closingTime = await this.crowdsale.closingTime();
-      closingTime.should.be.bignumber.equal(1528984800);
-    });
-  });
-
   describe('receive funds', function () {
     it('should forward funds to wallet when purchasing tokens', async function () {
       await this.crowdsale.setCurrentTime(Math.round(new Date('2018-03-28').getTime() / 1000));
@@ -348,13 +248,6 @@ contract('HardcapCrowdsaleTest', function (accounts) {
       await this.crowdsale.buyTokens(investor, { value: ether(10) });
       const post = await web3.eth.getBalance(wallet);
       post.minus(pre).should.be.bignumber.equal(ether(10));
-    });
-    it('should not forward any funds to wallet when assigng tokens', async function () {
-      await this.crowdsale.setCurrentTime(Math.round(new Date('2018-03-28').getTime() / 1000));
-      const pre = await web3.eth.getBalance(wallet);
-      await this.crowdsale.assignTokens(investor, ether(10));
-      const post = await web3.eth.getBalance(wallet);
-      post.should.be.bignumber.equal(pre.toNumber());
     });
     it('should not return if sent too much and tokens are over', async function () {
       await this.crowdsale.setCurrentTime(Math.round(new Date('2018-03-28').getTime() / 1000));
@@ -376,13 +269,6 @@ contract('HardcapCrowdsaleTest', function (accounts) {
       const weiRaised = await this.crowdsale.weiRaised();
       weiRaised.should.be.bignumber.equal(ether(15000));
     });
-   it('should add wei to weiRaised when tokens are assigned', async function() {
-     await this.crowdsale.setCurrentTime(Math.round(new Date('2018-03-28').getTime() / 1000));
-     const pre = await web3.eth.getBalance(wallet);
-     await this.crowdsale.assignTokens(investor, ether(15000));
-     const weiRaised = await this.crowdsale.weiRaised();
-     weiRaised.should.be.bignumber.equal(ether(15000));
-   });
   });
 
   describe('finalize', function () {
