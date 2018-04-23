@@ -2,7 +2,7 @@ pragma solidity ^0.4.18;
 
 import "zeppelin-solidity/contracts/ownership/Ownable.sol";
 import "zeppelin-solidity/contracts/math/SafeMath.sol";
-import "./Crowdsale.sol";
+import "./TokenCrowdsale.sol";
 import "./Token.sol";
 
 contract TeamTokenHolder is Ownable {
@@ -10,13 +10,13 @@ contract TeamTokenHolder is Ownable {
 
   uint256 private LOCKUP_TIME = 24; // in months
 
-  Crowdsale crowdsale;
+  TokenCrowdsale crowdsale;
   Token token;
   uint256 public collectedTokens;
 
   function TeamTokenHolder(address _owner, address _crowdsale, address _token) public {
     owner = _owner;
-    crowdsale = Crowdsale(_crowdsale);
+    crowdsale = TokenCrowdsale(_crowdsale);
     token = Token(_token);
   }
 

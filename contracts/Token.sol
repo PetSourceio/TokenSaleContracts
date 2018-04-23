@@ -11,7 +11,7 @@ import 'zeppelin-solidity/contracts/token/ERC20/BurnableToken.sol';
 */
 contract Token is CappedToken, PausableToken, BurnableToken {
 
-  uint256 private constant TOKEN_CAP = 100 * 10**24;
+  uint256 private constant TOKEN_CAP = 1000 * 10**24;
 
   string public constant name = "PetSource token";
   string public constant symbol = "PTS";
