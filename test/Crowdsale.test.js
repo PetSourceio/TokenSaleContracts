@@ -27,7 +27,7 @@ contract('CrowdsaleTest', function (accounts) {
 
   let shareholdersPercentages = [50, 8, 4, 13];
   let rates = [12500, 11500, 11000, 10500, 10000];
-  let icoCap = 200e24;
+  let icoCap = 250e24; // pre-ico + ico
   let minPurchase = 100e18;
   let icoPercentage = 25;
   let phaseLength = 7;
@@ -189,26 +189,28 @@ contract('CrowdsaleTest', function (accounts) {
       let token = await Token.new();
       //mint all pre-ico
       await token.mint(wallet, 50e24);
+
       let crowdsale = await TokenCrowdsale.new(rates, wallet, token.address,
       phaseLength, icoCap, minPurchase, icoPercentage, this.openingTime);
       await crowdsale.addToWhitelist(investorForShareHolders);
       await token.transferOwnership(crowdsale.address);
 
-
       await increaseTimeTo(this.openingTime + duration.weeks(1));
-      await crowdsale.buyTokens(investorForShareHolders, { value: ether(70000) });
+      await crowdsale.buyTokens(investorForShareHolders, { value: ether(90000) });
+
       await crowdsale.setShareHolders(shareholdersPercentages, this.shareHoldersWallets);
       await crowdsale.finalize().should.be.fulfilled;
+
       const walletBalance = await token.balanceOf(wallet);
       walletBalance.should.be.bignumber.equal(50e24);
       const teamTokenHolderBalance = await token.balanceOf(this.teamTokenHolder.address);
       teamTokenHolderBalance.should.be.bignumber.equal(80e24);
       const platformBalance = await token.balanceOf(platform);
       platformBalance.should.be.bignumber.equal(500e24);
-      const advisorBalance = await token.balanceOf(advisor);
+      const advisorBalance = await token.balanceOf(this.advisorTokenHolder.address);
       advisorBalance.should.be.bignumber.equal(40e24);
-      const founderBalance = await token.balanceOf(founder);
-      platformBalance.should.be.bignumber.equal(130e24);
+      const founderBalance = await token.balanceOf(this.founderTokenHolder.address);
+      founderBalance.should.be.bignumber.equal(130e24);
     });
     it('should finish minting when finalized', async function() {
       await increaseTimeTo(this.openingTime + duration.weeks(rates.length + 4));
